@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptomix AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(240deg);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 4px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00f5ff, #ff00ff);
+            border-radius: 50px;
+            width: 0;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-sections {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .form-sections {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .form-sections {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00f5ff, #ff00ff);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00f5ff;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .textarea-large {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .symptoms-section {
+            grid-column: 1 / -1;
+        }
+
+        .symptoms-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .symptoms-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+
+        .range-container {
+            position: relative;
+        }
+
+        .range-input {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            margin-bottom: 0.75rem;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .range-input::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .range-value {
+            text-align: center;
+            font-weight: 600;
+            color: #00f5ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #00f5ff, #ff00ff);
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 245, 255, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .bmi-display {
+            background: rgba(0, 245, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            color: #00f5ff;
+            margin-top: 0.5rem;
+        }
+
+        .result-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-item {
+            margin-bottom: 1rem;
+        }
+
+        .result-item strong {
+            color: #00f5ff;
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .form-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .symptoms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="main-title">
+                <i class="fas fa-stethoscope"></i>
+                Symptomix AI
+            </h1>
+            <p class="subtitle">Advanced medical analysis powered by artificial intelligence</p>
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="form-container">
+            {% if message %}
+            <div class="text-red-500 text-center mb-4">{{ message }}</div>
+            {% endif %}
+            <form id="predictionForm" action="/submit_prediction" method="POST">
+                <div class="form-sections">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="section-title">Personal Info</h3>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-input"
+                                placeholder="Enter first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-input"
+                                placeholder="Enter last name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" class="form-input" required>
+                        </div>
+                        <label for="gender" class="text-white font-medium mb-2">Gender</label>
+                        <select id="gender" name="gender"
+                            class="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-white/70 backdrop-blur-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200 appearance-none">
+                            <option value="" disabled selected>Select gender</option>
+                            <option value="male" class="text-black">Male</option>
+                            <option value="female" class="text-black">Female</option>
+                            <option value="other" class="text-black">Other</option>
+                        </select>
+
+                    </div>
+
+                    <!-- Physical Data Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                            <h3 class="section-title">Physical Data</h3>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight" class="form-label">Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" class="form-input" placeholder="70"
+                                step="0.1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="height" class="form-label">Height (cm)</label>
+                            <input type="number" id="height" name="height" class="form-input" placeholder="175"
+                                step="0.1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bmi" class="form-label">BMI</label>
+                            <div class="bmi-display" id="bmiDisplay">Auto-calculated</div>
+                        </div>
+                    </div>
+
+                    <!-- Medical & Lifestyle Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <h3 class="section-title">Medical & Lifestyle</h3>
+                        </div>
+                        <div class="form-group">
+                            <label for="allergies" class="form-label">Known Allergies</label>
+                            <input type="text" id="allergies" name="allergies" class="form-input"
+                                placeholder="Food, drug allergies">
+                        </div>
+                        <label for="smokingStatus" class="text-white font-medium mb-2">Smoking Status</label>
+                        <select id="smokingStatus" name="smokingStatus"
+                            class="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-white/70 backdrop-blur-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200 appearance-none">
+                            <option value="" disabled selected>Select status</option>
+                            <option value="former" class="text-black">Former smoker</option>
+                            <option value="never" class="text-black">Never smoked</option>
+                            <option value="current" class="text-black">Current smoker</option>
+                        </select>
+
+
+
+                        <label for="alcohol" class="text-white font-medium mb-2">Alcohol Frequency</label>
+                        <select id="alcohol" name="alcohol"
+                            class="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-white/70 backdrop-blur-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200 appearance-none">
+                            <option value="" disabled selected>Select frequency</option>
+                            <option value="never" class="text-black">Never</option>
+                            <option value="occasionally" class="text-black">Occasionally</option>
+                            <option value="frequently" class="text-black">Frequently</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <!-- Current Symptoms Section -->
+                <div class="form-section symptoms-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <h3 class="section-title">Current Symptoms</h3>
+                    </div>
+                    <div class="symptoms-grid">
+                        <div class="form-group">
+                            <label for="symptoms" class="form-label">Primary Symptoms</label>
+                            <textarea id="symptoms" name="symptoms" class="form-input textarea-large"
+                                placeholder="Describe main symptoms (fever, cough, headache, etc.)" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration" class="form-label">Duration (days)</label>
+                            <input type="number" id="duration" name="duration" class="form-input" placeholder="7"
+                                min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="severity" class="form-label">Severity (1-10)</label>
+                            <div class="range-container">
+                                <div class="range-value" id="severityValue">5</div>
+                                <input type="range" id="severity" name="severity" class="range-input" min="1" max="10"
+                                    value="5">
+                                <div class="range-labels">
+                                    <span>Mild</span>
+                                    <span>Severe</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="submit-container">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-brain"></i>
+                        Analyze & Predict
+                    </button>
+                </div>
+            </form>
+
+            <!-- Result Display -->
+            {% if predicted_disease %}
+            <div class="result-container" id="resultSection">
+                <h3 class="result-title">
+                    <i class="fas fa-diagnoses"></i>
+                    Prediction Results
+                </h3>
+                <div class="result-item">
+                    <strong>Name:</strong> {{ name }}
+                </div>
+                <div class="result-item">
+                    <strong>Predicted Disease:</strong> {{ predicted_disease }}
+                </div>
+                <div class="result-item">
+                    <strong>Description:</strong> {{ dis_des }}
+                </div>
+                <div class="result-item">
+                    <strong>Precautions:</strong>
+                    <ul>
+                        {% for precaution in my_precautions %}
+                        <li>{{ precaution }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <strong>Medications:</strong>
+                    <ul>
+                        {% for med in medications %}
+                        <li>{{ med }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <strong>Recommended Diet:</strong>
+                    <ul>
+                        {% for diet in my_diet %}
+                        <li>{{ diet }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <strong>Workout Recommendations:</strong>
+                    <ul>
+                        {% for exercise in workout %}
+                        <li>{{ exercise }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // BMI Calculator
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            if (weight && height) {
+                const heightInMeters = height / 100;
+                const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+                document.getElementById('bmiDisplay').textContent = `${bmi} kg/m²`;
+            } else {
+                document.getElementById('bmiDisplay').textContent = 'Auto-calculated';
+            }
+        }
+
+        // Add event listeners for BMI calculation
+        document.getElementById('weight').addEventListener('input', calculateBMI);
+        document.getElementById('height').addEventListener('input', calculateBMI);
+
+        // Progress bar functionality
+        const form = document.getElementById('predictionForm');
+        const progressBar = document.getElementById('progressBar');
+        const formInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+
+        function updateProgress() {
+            let filledInputs = 0;
+            formInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    filledInputs++;
+                }
+            });
+            const progress = (filledInputs / formInputs.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // Add event listeners to all required inputs
+        formInputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Severity range value display
+        const severityRange = document.getElementById('severity');
+        const severityValue = document.getElementById('severityValue');
+        severityRange.addEventListener('input', function () {
+            severityValue.textContent = this.value;
+        });
+
+        // Initialize progress and BMI on page load
+        updateProgress();
+        calculateBMI();
+
+        // Auto-scroll to result section if results are present
+        window.onload = function () {
+            {% if predicted_disease %}
+            const resultSection = document.getElementById('resultSection');
+            if (resultSection) {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            {% endif %}
+        };
+    </script>
+</body>
+
+</html>

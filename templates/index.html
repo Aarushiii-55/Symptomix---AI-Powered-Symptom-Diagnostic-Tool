@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptomix AI - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(240deg); }
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 3rem;
+        }
+        .main-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        .section-text {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #00f5ff, #ff00ff);
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 245, 255, 0.4);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            max-width: 600px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #00f5ff;
+            margin-bottom: 1.5rem;
+        }
+        .modal-text {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 767px) {
+            .container {
+                padding: 1rem;
+            }
+            .main-title {
+                font-size: 2rem;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .section-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="main-title">
+                <i class="fas fa-stethoscope"></i>
+                Symptomix AI
+            </h1>
+            <p class="subtitle">Advanced medical analysis powered by artificial intelligence</p>
+        </div>
+
+        <!-- Main Section -->
+        <div>
+            <h2 class="section-title">Relief starts with understanding</h2>
+            <p class="section-text italic">"The greatest wealth is health." – Virgil</p>
+            <button id="getStartedBtn" class="submit-btn">Get Started</button>
+        </div>
+
+        <!-- About Section -->
+        <div class="mt-12">
+            <h2 class="section-title">About Symptomix AI</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-white">Our Vision</h3>
+                    <p class="section-text">Symptomix AI is an innovative AI-powered platform designed to revolutionize healthcare by providing accurate disease predictions and personalized care plans. Our advanced algorithms analyze your symptoms to offer insights into potential conditions, along with tailored recommendations for precautions, medications, diet, and exercise.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-white">Our Mission</h3>
+                    <p class="section-text">Our mission is to make healthcare accessible, reliable, and proactive. Whether you're seeking emergency care, telemedicine consultations, or personalized health plans, Symptomix AI is your trusted partner in achieving optimal wellness. With a user-friendly interface and 24/7 availability, we empower you to take control of your health from anywhere, anytime.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer Modal -->
+        <div id="disclaimerModal" class="modal hidden items-center justify-center">
+
+            <div class="modal-content">
+                <h3 class="modal-title">Disclaimer</h3>
+                <p class="modal-text">The information provided by Symptomix AI is for informational purposes only and is not a substitute for professional medical advice. Always consult a qualified healthcare provider before making health-related decisions. Symptomix AI is not liable for any consequences arising from reliance on this information.</p>
+                <button id="closeDisclaimerBtn" class="submit-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const disclaimerModal = document.getElementById('disclaimerModal');
+        const closeDisclaimerBtn = document.getElementById('closeDisclaimerBtn');
+
+        getStartedBtn.addEventListener('click', () => {
+            disclaimerModal.style.display = 'flex';
+        });
+
+        closeDisclaimerBtn.addEventListener('click', () => {
+            disclaimerModal.style.display = 'none';
+            window.location.href = '/predict';
+        });
+    </script>
+</body>
+</html>
